@@ -11,9 +11,9 @@ import eyed3.mp3
 def fill_tags(filename, song, config):
     tag = eyed3.mp3.Mp3AudioFile(filename).tag
 
-    tag.title = song.title
+    tag.title = song.name
     tag.artist = song.artist
-    tag.album = song.album_title
+    tag.album = song.album_name
     tag.track_num = song.album_track_index, song.album_track_number
     tag.publisher = song.album_publisher
     tag.recording_date = song.album_publish_datetime

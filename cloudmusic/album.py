@@ -27,7 +27,7 @@ class Album(object):
         return DETAIL_TPL % dict(id=self.id)
 
     @property
-    def title(self):
+    def name(self):
         return self.detail['name']
 
     @property

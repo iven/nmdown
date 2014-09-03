@@ -6,9 +6,25 @@ from id3 import fill_tags
 from retrieve import retrieve_file
 
 
+def _get_filepath(song, extension, config):
+    format_dict = {
+        'song': song.name,
+        'album': song.album_name,
+        'artist': song.artist,
+        'playlist': config.get('playlist', '')
+    }
+
+    directory = config['directory'].format(**format_dict)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    filename = config['filename'].format(**format_dict) + extension
+    filepath = os.path.join(directory, filename)
+    return filepath
+
+
 def download_lyric(song, config):
-    filename = '%s - %s.lrc' % (song.artist, song.title_for_filename)
-    filepath = os.path.join(config['output'], filename)
+    filepath = _get_filepath(song, '.lrc', config)
     if os.path.exists(filepath):
         return
 
@@ -17,8 +33,7 @@ def download_lyric(song, config):
 
 
 def download_audio(song, config):
-    filename = '%s - %s.mp3' % (song.artist, song.title_for_filename)
-    filepath = os.path.join(config['output'], filename)
+    filepath = _get_filepath(song, '.mp3', config)
     if os.path.exists(filepath):
         return
 
@@ -37,6 +52,7 @@ def download_audio(song, config):
 
 
 def download_song(song, config):
+    config['song'] = song.name
     download_audio(song, config)
     if config['lyric'] and song.lyric:
         download_lyric(song, config)
@@ -48,13 +64,7 @@ def download_songs(songs, config):
 
 
 def download_album(album, config):
-    song_folder = u'[专辑]' + album.title
-    album_folder = os.path.join(config['output'], song_folder)
-    if not os.path.exists(album_folder):
-        os.mkdir(album_folder)
-
-    config = config.copy()
-    config['output'] = album_folder
+    config['album'] = album.name
     download_songs(album.songs, config)
 
 
@@ -64,13 +74,7 @@ def download_albums(albums, config):
 
 
 def download_playlist(playlist, config):
-    song_folder = u'[歌单]' + playlist.title
-    playlist_folder = os.path.join(config['output'], song_folder)
-    if not os.path.exists(playlist_folder):
-        os.mkdir(playlist_folder)
-
-    config = config.copy()
-    config['output'] = playlist_folder
+    config['playlist'] = playlist.name
     download_songs(playlist.songs, config)
 
 
@@ -80,13 +84,7 @@ def download_playlists(playlists, config):
 
 
 def download_artist(artist, config):
-    album_folder = u'[艺术家]' + artist.name
-    artist_folder = os.path.join(config['output'], album_folder)
-    if not os.path.exists(artist_folder):
-        os.mkdir(artist_folder)
-
-    config = config.copy()
-    config['output'] = artist_folder
+    config['artist'] = artist.name
     download_albums(artist.albums, config)
 
 

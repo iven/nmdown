@@ -112,12 +112,8 @@ class Song(object):
         return self._x_quality_mp3_bitrate(bitrate)
 
     @property
-    def title(self):
+    def name(self):
         return self.detail['name']
-
-    @property
-    def title_for_filename(self):
-        return self.title.replace('/', ' ')
 
     @property
     def artist(self):
@@ -132,7 +128,7 @@ class Song(object):
         return self.detail['album']['id']
 
     @property
-    def album_title(self):
+    def album_name(self):
         return self.detail['album']['name']
 
     @property
